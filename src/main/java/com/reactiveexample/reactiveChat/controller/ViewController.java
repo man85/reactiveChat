@@ -6,11 +6,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/")
-public class HomeController {
+public class ViewController {
 
     @GetMapping
-    public String home(){
+    public String home() {
         return "home";
     }
 
+    @GetMapping("/signup")
+    public String signup() {
+        return "signup";
+    }
 }

@@ -2,7 +2,6 @@ package com.reactiveexample.reactiveChat.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.codec.ServerCodecConfigurer;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
@@ -26,7 +25,8 @@ public class WebSecurityConfig {
                 .formLogin().and()
                 .httpBasic().disable()
                 .authorizeExchange()
-                .pathMatchers("/", "/login", "/favicon.ico").permitAll()
+                .pathMatchers("/", "/login", "/signup").permitAll()
+                .pathMatchers("/api/users", HttpMethod.POST.name()).permitAll()
                 .pathMatchers("/api/users", HttpMethod.GET.name()).hasRole("ADMIN")
                 .anyExchange().authenticated()
                 .and()
