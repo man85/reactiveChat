@@ -24,6 +24,8 @@ public class User implements UserDetails {
 
     private String role;
 
+    private Integer roleId;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singletonList(new SimpleGrantedAuthority(role));

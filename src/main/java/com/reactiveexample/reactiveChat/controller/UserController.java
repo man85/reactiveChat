@@ -25,8 +25,10 @@ public class UserController {
     }
 
     @PostMapping
-    Mono<ResponseEntity> addUser(@RequestBody User user) {
-        return Mono.just(ResponseEntity.status(HttpStatus.OK).body(modelMapper.map(user, UserDto.class)));
+    Mono<ResponseEntity<Object>> addUser(@RequestBody User user) {
+        Mono<ResponseEntity<Object>> mono = userService.addUser(user)
+                .map(usr -> ResponseEntity.status(HttpStatus.OK).body(modelMapper.map(usr, UserDto.class)));
+        return mono.onErrorResume(e -> Mono.just(ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(e.getMessage())));
     }
 
 }

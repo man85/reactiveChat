@@ -1,6 +1,7 @@
 package com.reactiveexample.reactiveChat.service;
 
 import com.reactiveexample.reactiveChat.domain.User;
+import com.reactiveexample.reactiveChat.exception.UserAlreadyExistsException;
 import com.reactiveexample.reactiveChat.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,8 @@ import reactor.core.publisher.Mono;
 @Service
 public class UserService implements ReactiveUserDetailsService {
 
+    private static final int USER_ROLE_ID = 2;
+
     private final UserRepository userRepository;
 
     @Override
@@ -27,5 +30,12 @@ public class UserService implements ReactiveUserDetailsService {
 
     public Flux<User> findAll() {
         return userRepository.findAll();
+    }
+
+    public Mono<User> addUser(final User user) {
+        user.setRoleId(USER_ROLE_ID);
+        return userRepository.findByUsernameWithQuery(user.getUsername()).doOnNext((el) -> {
+                    throw new UserAlreadyExistsException(user.getUsername());
+                }).switchIfEmpty(userRepository.save(user));
     }
 }
