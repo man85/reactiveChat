@@ -43,13 +43,27 @@
         if (response.ok) {
             response.json().then(function (usr) {
                 console.log('Response=' + usr);
-                document.getElementById('infoFragment').textContent = "User \"" + usr.username + "\" was added successfully";
-                setTimeout(() => window.location = '/', 3000);
+                let count = 5;
+                let countDownTimer = setInterval(() => {
+                    count = count - 1;
+                    if (count === 0) {
+                        clearInterval(countDownTimer);
+                        window.location = '/';
+                        return;
+
+                    }
+                    document.getElementById('errorFragment').textContent = "";
+                    document.getElementById('infoFragment').textContent = "User \"" + usr.username + "\" was added successfully.\n" +
+                        "You will be redirected to main page after " + count + " seconds";
+                }, 1000);
             })
         } else {
             debugger;
             console.log("Error happened " + response);
-            response.text().then(data=>{document.getElementById('errorFragment').textContent=data});
+            response.text().then(data => {
+                document.getElementById('errorFragment').textContent = data;
+                document.getElementById('infoFragment').textContent;
+            });
         }
     }
 
