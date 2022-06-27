@@ -34,8 +34,7 @@ public class UserService implements ReactiveUserDetailsService {
 
     public Mono<User> addUser(final User user) {
         user.setRoleId(USER_ROLE_ID);
-        return userRepository.findByUsernameWithQuery(user.getUsername()).doOnNext((el) -> {
-                    throw new UserAlreadyExistsException(user.getUsername());
-                }).switchIfEmpty(userRepository.save(user));
+        return userRepository.findByUsernameWithQuery(user.getUsername()).flatMap((el) -> Mono.<User>error(new UserAlreadyExistsException(user.getUsername()))
+        ).switchIfEmpty(userRepository.save(user));
     }
 }
