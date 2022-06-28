@@ -16,7 +16,7 @@
 
 <div th:fragment="header" class="container">
     <div class="row row-cols-auto pt-2 pb-2">
-        <div class="col" th:unless="${#authentication}" >
+        <div class="col" th:unless="${#authentication}">
             <a class="pe-4" th:href="@{/login}"> Log in </a>
         </div>
         <div class="col" th:unless="${#authentication}">
@@ -29,7 +29,45 @@
             </span>
         </div>
     </div>
+    <div class="row pt-2 pb-2">
+        <div class="col-auto" id="users"
+             th:if="${#authentication?.getAuthorities() != null ? #strings.contains(#authentication?.getAuthorities(),'[ROLE_ADMIN]'): false} ">
+        </div>
+        <div class="col" id="chatHistory" sec:authorize="isAuthenticated()">
+            Chat history
+        </div>
+    </div>
 </div>
+
+<script>
+    const usersNode = document.querySelector('#users');
+    if (usersNode) {
+        loadUsers();
+    }
+
+    async function loadUsers() {
+        let response = await fetch("api/users", {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if (response.ok) {
+            response.json().then(users =>
+                users.forEach(user =>
+                    usersNode.innerHTML += '<div class="row">' + user.username + '</div>'
+                )
+            );
+        } else {
+            debugger;
+            console.log("Error happened " + response);
+            response.text().then(data => {
+                document.getElementById('errorFragment').textContent = data;
+                document.getElementById('infoFragment').textContent = "";
+            });
+        }
+    }
+</script>
 
 </body>
 </html>
